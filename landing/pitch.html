@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>REPARA — Elevator Pitch</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1E6FFF;--teal:#00C9A7;--navy:#0D1B2A;
+  --white:#fff;--bg:#F5F7FA;--gray:#6B7990;--gray2:#B0BAC9;
+  --green:#22C55E;
+}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:var(--navy)}
+
+/* ── PROGRESS BAR ── */
+.progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--teal));z-index:200;transition:width .6s cubic-bezier(.16,1,.3,1)}
+
+/* ── LOGO ── */
+.logo{position:fixed;top:28px;left:40px;z-index:150;font-size:15px;font-weight:900;letter-spacing:-.04em;color:var(--navy);mix-blend-mode:normal}
+.logo span{color:var(--teal)}
+
+/* ── COUNTER ── */
+.counter{position:fixed;top:30px;right:40px;z-index:150;font-size:12px;font-weight:600;color:var(--gray2);letter-spacing:.06em}
+
+/* ── NAV ── */
+.nav{position:fixed;bottom:32px;left:0;right:0;z-index:150;display:flex;align-items:center;justify-content:center;gap:16px}
+.nbtn{width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);backdrop-filter:blur(8px);color:var(--white);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:'Inter',sans-serif}
+.nbtn:hover{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.15)}
+.nbtn:disabled{opacity:.25;cursor:default}
+.dots{display:flex;gap:7px;align-items:center}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.25);transition:all .35s;cursor:pointer}
+.dot.on{background:var(--white);width:20px;border-radius:3px}
+
+/* ── DECK ── */
+.deck{position:relative;width:100%;height:100vh;overflow:hidden}
+
+/* ── SLIDE ── */
+.slide{
+  position:absolute;inset:0;
+  display:flex;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .65s cubic-bezier(.16,1,.3,1), transform .65s cubic-bezier(.16,1,.3,1);
+  transform:translateX(48px);
+}
+.slide.active{opacity:1;pointer-events:all;transform:translateX(0)}
+.slide.out-left{opacity:0;transform:translateX(-48px)}
+
+/* ── SPLIT LAYOUT ── */
+.text-side{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:80px 56px 80px 72px;
+  background:var(--white);
+  flex:0 0 52%;
+  position:relative;
+  z-index:2;
+}
+.img-side{flex:1;position:relative;overflow:hidden}
+.img-side img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+
+/* ── EYEBROW ── */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--teal);margin-bottom:20px;
+}
+.eyebrow::before{content:'';width:20px;height:2px;background:var(--teal);border-radius:1px}
+
+/* ── HEADLINE ── */
+.h1{font-size:clamp(30px,3.2vw,50px);font-weight:900;color:var(--navy);letter-spacing:-.03em;line-height:1.1;margin-bottom:18px}
+.h1 b{color:var(--blue);font-weight:900}
+.h1 em{color:var(--teal);font-style:normal}
+
+/* ── SUBTEXT ── */
+.sub{font-size:clamp(14px,1.3vw,17px);color:var(--gray);line-height:1.7;max-width:400px;font-weight:400}
+
+/* ── ACCENT SIDE BAR ── */
+.sidebar{position:absolute;left:0;top:50%;transform:translateY(-50%);width:4px;height:72px;background:linear-gradient(var(--blue),var(--teal));border-radius:0 3px 3px 0}
+
+/* ── SLIDE 1 specific ── */
+#s1 .img-side::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(270deg,rgba(13,27,42,.55) 0%,rgba(13,27,42,.15) 100%);
+}
+#s1 .img-side::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(255,255,255,.25) 0%,transparent 30%);
+  z-index:1;
+}
+.s1-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);
+  color:#DC2626;font-size:12px;font-weight:600;padding:5px 12px;
+  border-radius:100px;margin-top:20px;width:fit-content;
+}
+.s1-night-stamp{
+  position:absolute;bottom:36px;right:0;left:0;
+  display:flex;justify-content:center;z-index:5;
+}
+.night-chip{
+  background:rgba(13,27,42,.75);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.12);border-radius:100px;
+  padding:9px 18px;color:rgba(255,255,255,.8);font-size:12px;font-weight:600;
+  display:flex;align-items:center;gap:8px;
+}
+
+/* ── UI MOCK (slide 2) ── */
+.mock-wrap{
+  margin-top:24px;
+  background:var(--white);border-radius:18px;padding:22px;
+  box-shadow:0 20px 60px rgba(0,0,0,.1),0 4px 16px rgba(0,0,0,.06);
+  max-width:340px;
+}
+.mock-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:10px}
+.mock-field{
+  display:flex;align-items:center;gap:9px;
+  background:#EFF4FF;border:2px solid var(--blue);border-radius:11px;
+  padding:11px 14px;margin-bottom:16px;
+}
+.mock-field-ico{font-size:15px}
+.mock-field-txt{font-size:14px;font-weight:700;color:var(--navy)}
+.cursor{width:2px;height:17px;background:var(--blue);border-radius:1px;animation:blink 1s step-end infinite;margin-left:2px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.mock-cards{display:flex;flex-direction:column;gap:8px}
+.mcard{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid #EEF1F6;border-radius:11px;background:var(--white);transition:all .2s}
+.mcard.top{border-color:var(--blue);box-shadow:0 4px 14px rgba(30,111,255,.14)}
+.mcard-av{width:34px;height:34px;border-radius:17px;object-fit:cover;flex-shrink:0}
+.mcard-name{font-size:12px;font-weight:700;color:var(--navy)}
+.mcard-meta{font-size:10px;color:var(--gray);margin-top:1px}
+.mcard-right{margin-left:auto;text-align:right;flex-shrink:0}
+.mcard-price{font-size:12px;font-weight:800;color:var(--navy)}
+.mcard-avail{font-size:10px;font-weight:600}
+
+/* Slide 2 image */
+#s2 .img-side::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(270deg,transparent 60%,rgba(255,255,255,.08) 100%);
+}
+
+/* ── BULLETS (slide 3) ── */
+.bullets{display:flex;flex-direction:column;gap:13px;margin:22px 0 26px}
+.bullet{display:flex;align-items:flex-start;gap:12px;opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}
+.slide.active .bullet:nth-child(1){opacity:1;transform:none;transition-delay:.1s}
+.slide.active .bullet:nth-child(2){opacity:1;transform:none;transition-delay:.22s}
+.slide.active .bullet:nth-child(3){opacity:1;transform:none;transition-delay:.34s}
+.bcheck{width:22px;height:22px;border-radius:50%;background:rgba(0,201,167,.12);color:var(--teal);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.btxt{font-size:clamp(13px,1.2vw,16px);color:var(--navy);font-weight:500;line-height:1.45}
+
+/* ── CLOSE LINE ── */
+.close-line{font-size:clamp(16px,1.7vw,22px);font-weight:800;color:var(--navy);letter-spacing:-.02em;margin-bottom:22px;line-height:1.3}
+
+/* ── CTA ── */
+.cta{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--blue);color:var(--white);
+  font-size:14px;font-weight:700;padding:15px 26px;
+  border-radius:13px;border:none;cursor:pointer;
+  font-family:'Inter',sans-serif;transition:all .2s;
+  box-shadow:0 6px 24px rgba(30,111,255,.38);
+  letter-spacing:-.01em;text-decoration:none;
+}
+.cta:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(30,111,255,.42)}
+.cta:active{transform:translateY(0)}
+
+/* Slide 3 image */
+#s3 .img-side::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(270deg,rgba(255,255,255,.05) 0%,rgba(255,255,255,.2) 100%);
+}
+.trust-strip{
+  position:absolute;bottom:0;left:0;right:0;z-index:5;
+  padding:14px 20px;
+  background:linear-gradient(transparent,rgba(255,255,255,.92));
+  display:flex;align-items:center;justify-content:center;gap:20px;
+}
+.trust-item{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--navy)}
+
+/* ── SLIDE INNER ANIM ── */
+.text-side .eyebrow,
+.text-side .h1,
+.text-side .sub,
+.text-side .mock-wrap,
+.text-side .s1-tag,
+.text-side .close-line,
+.text-side .cta{
+  opacity:0;transform:translateY(18px);
+  transition:opacity .55s ease,transform .55s ease;
+}
+.slide.active .text-side .eyebrow{opacity:1;transform:none;transition-delay:.05s}
+.slide.active .text-side .h1{opacity:1;transform:none;transition-delay:.15s}
+.slide.active .text-side .sub{opacity:1;transform:none;transition-delay:.25s}
+.slide.active .text-side .mock-wrap{opacity:1;transform:none;transition-delay:.3s}
+.slide.active .text-side .s1-tag{opacity:1;transform:none;transition-delay:.35s}
+.slide.active .text-side .close-line{opacity:1;transform:none;transition-delay:.1s}
+.slide.active .text-side .cta{opacity:1;transform:none;transition-delay:.42s}
+
+/* Image pan on active */
+.img-side img{transition:transform 6s ease;transform:scale(1.04)}
+.slide.active .img-side img{transform:scale(1)}
+
+/* Responsive */
+@media(max-width:900px){
+  .text-side{flex:0 0 60%;padding:60px 36px 80px 48px}
+  .h1{font-size:28px}
+}
+@media(max-width:640px){
+  .slide{flex-direction:column}
+  .text-side{flex:1;padding:60px 28px 24px}
+  .img-side{flex:0 0 35%}
+}
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="progress" id="progress" style="width:33.3%"></div>
+
+<!-- Logo -->
+<div class="logo">REPARA<span>.</span></div>
+
+<!-- Counter -->
+<div class="counter" id="counter">01 / 03</div>
+
+<!-- Nav -->
+<nav class="nav">
+  <button class="nbtn" id="prev" onclick="nav(-1)" disabled>←</button>
+  <div class="dots">
+    <div class="dot on" onclick="go(0)"></div>
+    <div class="dot" onclick="go(1)"></div>
+    <div class="dot" onclick="go(2)"></div>
+  </div>
+  <button class="nbtn" id="next" onclick="nav(1)">→</button>
+</nav>
+
+<!-- ─────────────────────────────────────────── -->
+<div class="deck">
+
+  <!-- ① PROBLEMA -->
+  <div class="slide active" id="s1">
+    <div class="text-side">
+      <div class="sidebar"></div>
+      <div class="eyebrow">El problema</div>
+      <h1 class="h1">
+        ¿Se te rompe algo<br>en casa y no sabes<br>a quién llamar?
+      </h1>
+      <p class="sub">
+        Es urgente. Es de noche.<br>Y no confías en cualquiera.
+      </p>
+      <div class="s1-tag">
+        <span style="font-size:14px">🕙</span>
+        11:47 pm · fuga de agua en el baño
+      </div>
+    </div>
+    <div class="img-side">
+      <img
+        src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=900&q=85"
+        alt="Problema urgente en el hogar"
+        onerror="this.src='https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&fit=crop&w=900&q=85'"
+      />
+      <div class="s1-night-stamp">
+        <div class="night-chip">
+          <span>🔴</span> Problema urgente detectado
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② SOLUCIÓN -->
+  <div class="slide" id="s2">
+    <div class="text-side">
+      <div class="sidebar"></div>
+      <div class="eyebrow">La solución</div>
+      <h1 class="h1">
+        Solo dinos<br><b>qué necesitas</b>
+      </h1>
+      <div class="mock-wrap">
+        <div class="mock-lbl">¿Qué necesitas arreglar?</div>
+        <div class="mock-field">
+          <div class="mock-field-ico">🔍</div>
+          <div class="mock-field-txt">fuga de agua</div>
+          <div class="cursor"></div>
+        </div>
+        <div class="mock-cards">
+          <div class="mcard top">
+            <img class="mcard-av" src="https://i.pravatar.cc/80?img=1" alt=""/>
+            <div><div class="mcard-name">Jorge M.</div><div class="mcard-meta">Gasfitero · ⭐ 4.9</div></div>
+            <div class="mcard-right"><div class="mcard-price">S/120–150</div><div class="mcard-avail" style="color:var(--green)">● Disponible ahora</div></div>
+          </div>
+          <div class="mcard">
+            <img class="mcard-av" src="https://i.pravatar.cc/80?img=2" alt=""/>
+            <div><div class="mcard-name">Rubén L.</div><div class="mcard-meta">Gasfitero · ⭐ 4.8</div></div>
+            <div class="mcard-right"><div class="mcard-price">S/130–170</div><div class="mcard-avail" style="color:var(--green)">● Disponible ahora</div></div>
+          </div>
+          <div class="mcard" style="opacity:.55">
+            <img class="mcard-av" src="https://i.pravatar.cc/80?img=5" alt=""/>
+            <div><div class="mcard-name">Carlos G.</div><div class="mcard-meta">Gasfitero · ⭐ 4.7</div></div>
+            <div class="mcard-right"><div class="mcard-price">S/110–150</div><div class="mcard-avail" style="color:var(--gray2)">Ocupado</div></div>
+          </div>
+        </div>
+      </div>
+      <p class="sub" style="margin-top:16px">No buscas técnicos. Buscas <strong style="color:var(--navy);font-weight:700">soluciones</strong>.</p>
+    </div>
+    <div class="img-side">
+      <img
+        src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=900&q=85"
+        alt="Técnico trabajando"
+        onerror="this.src='https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=900&q=85'"
+      />
+    </div>
+  </div>
+
+  <!-- ③ CIERRE -->
+  <div class="slide" id="s3">
+    <div class="text-side">
+      <div class="sidebar"></div>
+      <div class="eyebrow">La confianza</div>
+      <h1 class="h1">
+        Sabes quién<br>entra a <em>tu casa</em>
+      </h1>
+      <div class="bullets">
+        <div class="bullet">
+          <div class="bcheck">✓</div>
+          <div class="btxt">Técnicos verificados con <strong>PNP y RENIEC</strong></div>
+        </div>
+        <div class="bullet">
+          <div class="bcheck">✓</div>
+          <div class="btxt">Disponibles en tiempo real, <strong>24/7</strong></div>
+        </div>
+        <div class="bullet">
+          <div class="bcheck">✓</div>
+          <div class="btxt">Pagas solo si el trabajo <strong>quedó bien</strong></div>
+        </div>
+      </div>
+      <div class="close-line">Resuelves hoy.<br>Sin estrés.</div>
+      <a href="index.html" class="cta">Buscar técnico ahora &nbsp;→</a>
+    </div>
+    <div class="img-side">
+      <img
+        src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=85"
+        alt="Hogar tranquilo y confiable"
+        onerror="this.src='https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=900&q=85'"
+      />
+      <div class="trust-strip">
+        <div class="trust-item"><span style="color:var(--green)">●</span> 127 técnicos activos ahora</div>
+        <div style="width:1px;height:14px;background:#D1D9E6"></div>
+        <div class="trust-item">🛡️ Garantía 30 días</div>
+        <div style="width:1px;height:14px;background:#D1D9E6"></div>
+        <div class="trust-item">⚡ Llega en ~30 min</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- ─────────────────────────────────────────── -->
+
+<script>
+let cur = 0;
+const total = 3;
+let animating = false;
+
+function go(n) {
+  if (n === cur || n < 0 || n >= total || animating) return;
+  animating = true;
+
+  const slides = document.querySelectorAll('.slide');
+  const dir = n > cur ? 1 : -1;
+
+  // Exit current
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('out-left');
+  if (dir < 0) {
+    slides[cur].style.transform = 'translateX(48px)';
+  }
+
+  const leaving = slides[cur];
+  setTimeout(() => {
+    leaving.classList.remove('out-left');
+    leaving.style.transform = '';
+  }, 680);
+
+  // Enter next: position off-screen first
+  slides[n].style.transition = 'none';
+  slides[n].style.transform = `translateX(${dir * 48}px)`;
+  slides[n].style.opacity = '0';
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      slides[n].style.transition = '';
+      slides[n].classList.add('active');
+      setTimeout(() => { animating = false; }, 680);
+    });
+  });
+
+  cur = n;
+  updateUI();
+}
+
+function nav(d) { go(cur + d); }
+
+function updateUI() {
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+  document.getElementById('counter').textContent = `0${cur+1} / 0${total}`;
+  document.getElementById('progress').style.width = `${((cur + 1) / total) * 100}%`;
+  document.getElementById('prev').disabled = cur === 0;
+  document.getElementById('next').disabled = cur === total - 1;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); nav(1); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); nav(-1); }
+});
+
+// Swipe support
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 50) nav(dx > 0 ? 1 : -1);
+});
+
+updateUI();
+</script>
+</body>
+</html>

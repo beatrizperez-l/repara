@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>REPARA — App Prototype v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#fff;--bg:#F5F7FA;--bg2:#EEF1F6;
+  --blue:#1E6FFF;--blue-l:rgba(30,111,255,.1);
+  --teal:#00C9A7;--teal-l:rgba(0,201,167,.1);
+  --navy:#0D1B2A;
+  --text:#1A2332;--text2:#4A5568;--text3:#6B7990;--text4:#B0BAC9;
+  --green:#22C55E;--green-l:rgba(34,197,94,.1);
+  --orange:#F59E0B;--red:#EF4444;--red-l:rgba(239,68,68,.1);
+  --sh:0 2px 12px rgba(0,0,0,.08);--sh2:0 4px 24px rgba(0,0,0,.12);
+}
+body{font-family:'Inter',sans-serif;background:#dce3ec;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 20px 60px;color:var(--text)}
+.page-header{text-align:center;margin-bottom:20px}
+.page-title{font-size:1.9rem;font-weight:900;letter-spacing:-.04em;color:var(--navy)}
+.page-title span{color:var(--teal)}
+.page-sub{font-size:.8rem;color:var(--text3);margin-top:5px}
+.screen-nav{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:24px;max-width:780px}
+.nav-btn{padding:6px 13px;border-radius:100px;border:1.5px solid #c8d1de;background:var(--white);color:var(--text3);font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.nav-btn:hover{border-color:var(--blue);color:var(--blue)}
+.nav-btn.active{background:var(--blue);border-color:var(--blue);color:var(--white)}
+.phone-wrap{display:flex;justify-content:center}
+.phone-frame{width:375px;border-radius:44px;background:var(--white);overflow:hidden;border:8px solid #2a3a4e;box-shadow:0 40px 100px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.1);position:relative}
+.phone-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:30px;background:#2a3a4e;border-radius:0 0 20px 20px;z-index:100;display:flex;align-items:center;justify-content:center;gap:6px}
+.notch-cam{width:10px;height:10px;border-radius:50%;background:#1a2535}
+.notch-speaker{width:40px;height:4px;border-radius:2px;background:#1a2535}
+.screen{display:none;flex-direction:column;min-height:720px;background:var(--white);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.screen.active{display:flex}
+.screen::-webkit-scrollbar{display:none}
+.sbar{display:flex;justify-content:space-between;padding:36px 20px 4px;font-size:11px;font-weight:600;color:var(--text3);flex-shrink:0}
+.topbar{display:flex;align-items:center;padding:10px 20px 8px;flex-shrink:0}
+.topbar-between{justify-content:space-between}
+.back{font-size:20px;cursor:pointer;padding:4px;color:var(--text);background:none;border:none;margin-right:10px}
+.toptitle{font-size:17px;font-weight:800;color:var(--text)}
+.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
+.scroll::-webkit-scrollbar{display:none}
+.px{padding-left:20px;padding-right:20px}
+.footer{padding:12px 20px 28px;background:var(--white);border-top:1px solid var(--bg2);flex-shrink:0}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;width:100%;transition:all .15s}
+.btn:active{opacity:.85;transform:scale(.98)}
+.btn-blue{background:var(--blue);color:var(--white);box-shadow:0 4px 20px rgba(30,111,255,.3)}
+.btn-teal{background:var(--teal);color:var(--navy)}
+.btn-green{background:var(--green);color:var(--white);box-shadow:0 4px 16px rgba(34,197,94,.3)}
+.btn-ghost{background:transparent;color:var(--text3);font-size:14px;font-weight:500;padding:12px}
+.btn-danger{background:var(--red-l);border:1.5px solid rgba(239,68,68,.3);color:var(--red)}
+.btn-sm{padding:9px 16px;font-size:13px;border-radius:10px;width:auto}
+.card{background:var(--white);border-radius:16px;padding:16px;box-shadow:var(--sh)}
+.card-bg{background:var(--bg);border-radius:14px;padding:14px}
+.card-blue{background:var(--blue-l);border:1px solid rgba(30,111,255,.2);border-radius:14px;padding:14px}
+.card-teal{background:var(--teal-l);border:1px solid rgba(0,201,167,.25);border-radius:14px;padding:14px}
+.card-green{background:var(--green-l);border:1px solid rgba(34,197,94,.2);border-radius:14px;padding:14px}
+.divider{height:8px;background:var(--bg);margin:0 -1px}
+.sec-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+.gap{display:flex;flex-direction:column;gap:12px}
+.chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:3px}
+.chip-row::-webkit-scrollbar{display:none}
+.chip{padding:8px 15px;border-radius:100px;border:1.5px solid #d1d9e6;color:var(--text2);font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;background:var(--white);font-family:'Inter',sans-serif;flex-shrink:0;transition:all .15s}
+.chip:hover,.chip.on{background:var(--blue);border-color:var(--blue);color:var(--white)}
+.avatar{border-radius:50%;object-fit:cover;flex-shrink:0}
+.vbadge{display:inline-flex;align-items:center;gap:4px;background:var(--teal-l);color:var(--teal);font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px}
+.tag-green{display:inline-flex;align-items:center;gap:5px;background:var(--green-l);color:var(--green);font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(0,201,167,.5)}50%{box-shadow:0 0 0 14px rgba(0,201,167,0)}}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 1.4s ease-in-out infinite}
+
+/* ── HOME ── */
+.home-hero{padding:20px 20px 16px;background:linear-gradient(170deg,#ebf2ff 0%,#fff 100%)}
+.search-wrap{position:relative}
+.search-ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none}
+.search-input{width:100%;background:var(--white);border:2px solid #d1d9e6;border-radius:16px;padding:16px 16px 16px 48px;font-size:16px;font-family:'Inter',sans-serif;color:var(--text);outline:none;box-shadow:var(--sh2);transition:all .2s}
+.search-input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(30,111,255,.15)}
+.search-input::placeholder{color:var(--text4)}
+.prob-chip{padding:9px 15px;border-radius:100px;border:1.5px solid #d1d9e6;background:var(--white);color:var(--text2);font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0;transition:all .15s;display:flex;align-items:center;gap:6px}
+.prob-chip:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-l)}
+
+/* ── MATCHING ── */
+.match-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:720px;padding:40px 24px;background:var(--white)}
+.match-spinner{width:56px;height:56px;border-radius:50%;border:4px solid var(--bg2);border-top-color:var(--blue);animation:spin 1s linear infinite;margin-bottom:20px}
+.mstep{display:flex;align-items:center;gap:12px;width:100%;max-width:300px;opacity:.25;transition:opacity .4s}
+.mstep.show{opacity:1}
+.mcheck{width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── TECH CARDS ── */
+.tcard{background:var(--white);border:1.5px solid #eef1f6;border-radius:18px;padding:16px;margin-bottom:12px;cursor:pointer;transition:all .15s;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.tcard:hover{border-color:var(--blue);box-shadow:0 4px 20px rgba(30,111,255,.15)}
+.price-box{background:var(--bg);border-radius:10px;padding:8px 12px;text-align:right;flex-shrink:0}
+.avail-dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+
+/* ── PROFILE ── */
+.prof-header{position:relative;height:250px;overflow:hidden;flex-shrink:0}
+.prof-photo{width:100%;height:100%;object-fit:cover}
+.prof-overlay{position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(transparent,rgba(0,0,0,.8))}
+.prof-back{position:absolute;top:46px;left:14px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:18px;box-shadow:var(--sh)}
+.verify-row{display:flex;align-items:center;gap:12px;background:var(--teal-l);border:1px solid rgba(0,201,167,.2);border-radius:14px;padding:14px;cursor:pointer}
+.stats-bar{display:flex;background:var(--bg);border-radius:13px;overflow:hidden}
+.stat-it{flex:1;padding:13px 8px;text-align:center}
+.stat-div{width:1px;background:#d1d9e6}
+
+/* ── PAYMENT ── */
+.pay-row{display:flex;align-items:center;gap:12px;padding:14px;border:2px solid #eef1f6;border-radius:14px;cursor:pointer;transition:all .15s;margin-bottom:8px}
+.pay-row.sel{border-color:var(--blue);background:var(--blue-l)}
+.pay-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--bg)}
+.pay-radio{width:20px;height:20px;border-radius:50%;border:2px solid #d1d9e6;margin-left:auto;display:flex;align-items:center;justify-content:center}
+.pay-row.sel .pay-radio{border-color:var(--blue);background:var(--blue)}
+.pay-row.sel .pay-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff}
+
+/* ── TRACKING ── */
+.map-area{height:196px;background:linear-gradient(135deg,#e5eefb,#d6e6ff);position:relative;overflow:hidden;flex-shrink:0}
+.track-card{margin:-28px 16px 0;position:relative;z-index:10;background:var(--white);border-radius:18px;padding:16px;box-shadow:var(--sh2)}
+.track-dot{width:16px;height:16px;border-radius:50%;background:var(--blue);position:absolute;box-shadow:0 0 0 5px rgba(30,111,255,.25);transition:all .5s ease}
+
+/* ── DOOR ── */
+.door-frame{margin:14px 16px;border-radius:18px;overflow:hidden;position:relative;box-shadow:var(--sh2);border:3px solid var(--teal);animation:glow 2s ease-in-out infinite}
+.door-img{width:100%;height:200px;object-fit:cover;object-position:top}
+
+/* ── STARS ── */
+.star-sel{display:flex;gap:8px;justify-content:center}
+.star{font-size:36px;cursor:pointer;transition:all .15s;opacity:.3;filter:grayscale(1)}
+.star.on{opacity:1;filter:none;transform:scale(1.15)}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal-sheet{background:var(--white);border-radius:24px 24px 0 0;padding:20px;width:375px;max-height:80vh;overflow-y:auto}
+.modal-handle{width:40px;height:4px;border-radius:2px;background:#d1d9e6;margin:0 auto 18px}
+
+/* ── ESCROW FLOW ── */
+.escrow-row{display:flex;align-items:center;gap:0;margin:10px 0}
+.escrow-node{flex:1;text-align:center;padding:10px 6px;border-radius:11px}
+.escrow-node.hi{background:var(--blue-l)}
+.escrow-arrow{font-size:14px;color:var(--text4);flex-shrink:0;margin:0 2px}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-title">REPARA<span>.</span> <span style="font-size:1rem;font-weight:500;color:var(--text3)">Prototype v2</span></div>
+  <div class="page-sub">Matching por problema · Diseño blanco · Flujo corregido</div>
+</div>
+
+<div class="screen-nav">
+  <button class="nav-btn active" onclick="go('home')">① Home</button>
+  <button class="nav-btn" onclick="go('matching')">② Buscando</button>
+  <button class="nav-btn" onclick="go('list')">③ Resultados</button>
+  <button class="nav-btn" onclick="go('profile')">④ Perfil</button>
+  <button class="nav-btn" onclick="go('booking')">⑤ Confirmar</button>
+  <button class="nav-btn" onclick="go('payment')">⑥ Pago</button>
+  <button class="nav-btn" onclick="go('tracking')">⑦ Tracking</button>
+  <button class="nav-btn" onclick="go('door')">⑧ Puerta</button>
+  <button class="nav-btn" onclick="go('completion')">⑨ Completado</button>
+  <button class="nav-btn" onclick="go('saved')">⑩ Mis técnicos</button>
+</div>
+
+<div class="phone-wrap">
+<div class="phone-frame">
+<div class="phone-notch"><div class="notch-cam"></div><div class="notch-speaker"></div><div class="notch-cam"></div></div>
+
+<!-- ① HOME -->
+<div class="screen active" id="s-home">
+  <div class="sbar"><span>10:47 PM</span><span>●●● 92%</span></div>
+  <div class="home-hero">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <div>
+        <div style="font-size:21px;font-weight:900;color:var(--text)">REPARA<span style="color:var(--teal)">.</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">Técnicos verificados · disponibles ahora</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;background:var(--green-l);border:1px solid rgba(34,197,94,.3);border-radius:100px;padding:5px 12px">
+        <div class="live-dot"></div>
+        <span style="font-size:12px;font-weight:600;color:var(--green)">En línea</span>
+      </div>
+    </div>
+    <div style="font-size:23px;font-weight:900;color:var(--text);letter-spacing:-.02em;margin-bottom:14px;line-height:1.2">¿Qué necesitas<br>arreglar hoy?</div>
+    <div class="search-wrap">
+      <div class="search-ico">🔍</div>
+      <input class="search-input" id="prob-input" placeholder="Ej: fuga de agua, no hay luz, puerta trabada..." type="text" oninput="onProbInput(this.value)" onkeydown="if(event.key==='Enter')startSearch()"/>
+    </div>
+  </div>
+
+  <div style="padding:14px 20px 4px"><div class="sec-label">Problemas frecuentes</div></div>
+  <div class="chip-row" style="padding:0 20px 12px">
+    <div class="prob-chip" onclick="setChip('Fuga de agua','gasfiteria')">💧 Fuga de agua</div>
+    <div class="prob-chip" onclick="setChip('No hay luz','electricidad')">⚡ Sin luz</div>
+    <div class="prob-chip" onclick="setChip('Cerradura trabada','cerrajeria')">🔑 Cerradura</div>
+    <div class="prob-chip" onclick="setChip('Aire acondicionado','ac')">❄️ A/C</div>
+    <div class="prob-chip" onclick="setChip('Desagüe tapado','gasfiteria')">🚿 Desagüe</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="scroll px" style="padding-top:16px;padding-bottom:16px">
+    <div class="sec-label" style="margin-bottom:14px">Cómo funciona</div>
+    <div class="gap" style="gap:14px;margin-bottom:18px">
+      <div style="display:flex;align-items:flex-start;gap:13px">
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--blue-l);color:var(--blue);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
+        <div><div style="font-size:14px;font-weight:700;color:var(--text)">Describe tu problema</div><div style="font-size:13px;color:var(--text2);margin-top:2px">En tus propias palabras, sin tecnicismos</div></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:13px">
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--blue-l);color:var(--blue);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
+        <div><div style="font-size:14px;font-weight:700;color:var(--text)">Te conectamos con el técnico ideal</div><div style="font-size:13px;color:var(--text2);margin-top:2px">Verificado, disponible y cerca de ti</div></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:13px">
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--blue-l);color:var(--blue);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+        <div><div style="font-size:14px;font-weight:700;color:var(--text)">Tu dinero, protegido</div><div style="font-size:13px;color:var(--text2);margin-top:2px">Se libera solo cuando confirmes que quedó bien</div></div>
+      </div>
+    </div>
+    <div class="card-teal" style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:22px">🛡️</span>
+      <div><div style="font-size:13px;font-weight:700;color:var(--teal)">Garantía REPARA — 30 días</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Si el problema reaparece, el técnico vuelve sin costo.</div></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button class="btn btn-blue" id="search-btn" onclick="startSearch()" disabled style="opacity:.4">Buscar técnicos disponibles</button>
+    <div style="font-size:12px;color:var(--text3);text-align:center;margin-top:8px">Sin registro · Técnicos llegan en ~30 min</div>
+  </div>
+</div>
+
+<!-- ② MATCHING -->
+<div class="screen" id="s-matching">
+  <div class="sbar"><span>10:47 PM</span><span>●●● 92%</span></div>
+  <div class="match-screen">
+    <div class="match-spinner"></div>
+    <div style="background:var(--bg);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:20px;width:100%;max-width:300px">
+      <span style="font-size:22px" id="m-icon">💧</span>
+      <div>
+        <div style="font-size:11px;color:var(--text3);font-weight:600">Problema detectado</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text)" id="m-prob">Fuga de agua</div>
+      </div>
+    </div>
+    <div style="font-size:22px;font-weight:800;color:var(--text);text-align:center;margin-bottom:8px">Buscando técnicos...</div>
+    <div style="font-size:13px;color:var(--text3);text-align:center">Verificando disponibilidad en tiempo real</div>
+    <div style="margin-top:28px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px">
+      <div class="mstep" id="ms1"><div class="mcheck">✓</div><span style="font-size:13px;font-weight:600;color:var(--text)" id="ms1-lbl">Problema identificado</span></div>
+      <div class="mstep" id="ms2"><div class="mcheck">✓</div><span style="font-size:13px;font-weight:600;color:var(--text)">Técnicos disponibles encontrados</span></div>
+      <div class="mstep" id="ms3"><div class="mcheck">✓</div><span style="font-size:13px;font-weight:600;color:var(--text)">Antecedentes verificados</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ RESULTS -->
+<div class="screen" id="s-list">
+  <div class="sbar"><span>10:48 PM</span><span>●●● 92%</span></div>
+  <div class="topbar topbar-between">
+    <button class="back" onclick="go('home')">←</button>
+    <div class="toptitle" id="list-title">Técnicos disponibles</div>
+    <div style="width:36px"></div>
+  </div>
+  <div class="px" style="padding-bottom:10px">
+    <div style="font-size:13px;color:var(--text3);margin-bottom:10px" id="list-sub"></div>
+    <div class="chip-row" id="zone-chips"></div>
+  </div>
+  <div class="divider"></div>
+  <div class="scroll px" style="padding-top:14px;padding-bottom:20px" id="tech-list"></div>
+</div>
+
+<!-- ④ PROFILE -->
+<div class="screen" id="s-profile">
+  <div class="prof-header">
+    <img class="prof-photo" id="pp-photo" src="" alt=""/>
+    <div class="prof-overlay">
+      <div style="font-size:21px;font-weight:900;color:#fff" id="pp-name"></div>
+      <div style="font-size:13px;color:rgba(255,255,255,.7);margin-top:3px" id="pp-spec"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:7px">
+        <span style="color:var(--orange);font-size:13px" id="pp-stars"></span>
+        <span style="font-size:12px;color:rgba(255,255,255,.6)" id="pp-jobs"></span>
+      </div>
+    </div>
+    <button class="prof-back" onclick="go('list')">←</button>
+    <div style="position:absolute;top:46px;right:14px"><div class="sbar" style="padding:0"></div></div>
+  </div>
+
+  <div class="scroll">
+    <div class="px" style="padding-top:14px;padding-bottom:14px">
+      <div class="verify-row" onclick="openModal()">
+        <span style="font-size:22px">🛡️</span>
+        <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--teal)">Técnico verificado por REPARA</div><div style="font-size:12px;color:var(--text3);margin-top:1px">PNP · RENIEC · Historial de trabajos</div></div>
+        <span style="color:var(--text3);font-size:18px">›</span>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="px" style="padding-top:14px;padding-bottom:14px">
+      <div class="stats-bar" id="pp-stats"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="px" style="padding-top:14px;padding-bottom:14px">
+      <div class="sec-label">Precio estimado</div>
+      <div class="card-blue" style="display:flex;align-items:center;justify-content:space-between">
+        <div><div style="font-size:22px;font-weight:900;color:var(--blue)" id="pp-price"></div><div style="font-size:12px;color:var(--text3);margin-top:2px">Precio confirmado antes de empezar</div></div>
+        <span style="font-size:26px">💰</span>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="px" style="padding-top:14px;padding-bottom:20px">
+      <div class="sec-label">Reseñas</div>
+      <div id="pp-reviews"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button class="btn btn-blue" onclick="go('booking')">Reservar ahora</button>
+    <div style="font-size:12px;color:var(--text3);text-align:center;margin-top:7px">Sin cobro hasta que confirmes el trabajo</div>
+  </div>
+</div>
+
+<!-- ⑤ BOOKING -->
+<div class="screen" id="s-booking">
+  <div class="sbar"><span>10:49 PM</span><span>●●● 92%</span></div>
+  <div class="topbar topbar-between">
+    <button class="back" onclick="go('profile')">←</button>
+    <div class="toptitle">Confirmar reserva</div>
+    <div style="width:36px"></div>
+  </div>
+  <div class="scroll px gap" style="padding-top:14px;padding-bottom:14px">
+    <div>
+      <div class="sec-label">Tu problema</div>
+      <div class="card-bg" style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:24px" id="bk-icon">💧</span>
+        <div><div style="font-size:15px;font-weight:700;color:var(--text)" id="bk-prob">Fuga de agua</div><div style="font-size:12px;color:var(--text3);margin-top:2px" id="bk-cat">Gasfitería</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="sec-label">Tu técnico</div>
+      <div class="card" style="display:flex;align-items:center;gap:13px">
+        <img class="avatar" id="bk-photo" src="" style="width:50px;height:50px" alt=""/>
+        <div style="flex:1"><div style="font-size:15px;font-weight:700;color:var(--text)" id="bk-name"></div><div style="font-size:12px;color:var(--text3);margin-top:2px" id="bk-spec"></div><div class="vbadge" style="margin-top:4px">🛡️ Verificado</div></div>
+        <div style="text-align:right"><div style="font-size:11px;color:var(--text3)">Rating</div><div style="font-size:15px;font-weight:800;color:var(--text)" id="bk-rating"></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="sec-label">Precio</div>
+      <div class="card-blue">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:14px;color:var(--text2)">Estimado del servicio</span>
+          <span style="font-size:18px;font-weight:800;color:var(--blue)" id="bk-price"></span>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">El precio final se confirma antes de empezar. Sin sorpresas.</div>
+      </div>
+    </div>
+    <div>
+      <div class="sec-label">Pago protegido (escrow)</div>
+      <div class="card" style="border:1.5px solid #eef1f6">
+        <div class="escrow-row">
+          <div class="escrow-node hi"><div style="font-size:18px">👤</div><div style="font-size:10px;font-weight:700;color:var(--blue);margin-top:3px">Tú pagas</div></div>
+          <div class="escrow-arrow">→</div>
+          <div class="escrow-node"><div style="font-size:18px">🏦</div><div style="font-size:10px;font-weight:700;color:var(--text3);margin-top:3px">REPARA retiene</div></div>
+          <div class="escrow-arrow">→</div>
+          <div class="escrow-node"><div style="font-size:18px">🔧</div><div style="font-size:10px;font-weight:700;color:var(--text3);margin-top:3px">Técnico recibe</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);text-align:center;margin-top:6px">Solo cuando <strong style="color:var(--text)">tú confirmes</strong> que el trabajo quedó bien</div>
+      </div>
+    </div>
+    <div class="card-teal" style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:22px">🛡️</span>
+      <div><div style="font-size:13px;font-weight:700;color:var(--teal)">Garantía incluida — 30 días</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Si el problema reaparece, el técnico vuelve sin costo.</div></div>
+    </div>
+  </div>
+  <div class="footer">
+    <button class="btn btn-blue" onclick="go('payment')">Continuar al pago → S/<span id="bk-footer-price"></span></button>
+  </div>
+</div>
+
+<!-- ⑥ PAYMENT -->
+<div class="screen" id="s-payment">
+  <div class="sbar"><span>10:50 PM</span><span>●●● 92%</span></div>
+  <div class="topbar topbar-between">
+    <button class="back" onclick="go('booking')">←</button>
+    <div class="toptitle">Pago seguro</div>
+    <div style="width:36px"></div>
+  </div>
+  <div class="scroll px gap" style="padding-top:14px;padding-bottom:14px">
+    <div class="card-blue" style="text-align:center;padding:20px">
+      <div style="font-size:13px;color:var(--blue);font-weight:600;margin-bottom:4px">Total a retener en escrow</div>
+      <div style="font-size:34px;font-weight:900;color:var(--text)">S/<span id="pay-amt"></span></div>
+      <div style="font-size:12px;color:var(--text3);margin-top:5px">Tu dinero no le llega al técnico hasta que tú digas que el trabajo quedó bien.</div>
+    </div>
+    <div>
+      <div class="sec-label">Método de pago</div>
+      <div class="pay-row sel" onclick="selPay(this,'yape')">
+        <div class="pay-ico">🟣</div>
+        <div><div style="font-size:14px;font-weight:700;color:var(--text)">Yape</div><div style="font-size:12px;color:var(--text3)">Pago instantáneo</div></div>
+        <div class="pay-radio"></div>
+      </div>
+      <div class="pay-row" onclick="selPay(this,'plin')">
+        <div class="pay-ico">🟢</div>
+        <div><div style="font-size:14px;font-weight:700;color:var(--text)">Plin</div><div style="font-size:12px;color:var(--text3)">Pago instantáneo</div></div>
+        <div class="pay-radio"></div>
+      </div>
+      <div class="pay-row" onclick="selPay(this,'card')">
+        <div class="pay-ico">💳</div>
+        <div><div style="font-size:14px;font-weight:700;color:var(--text)">Tarjeta crédito/débito</div><div style="font-size:12px;color:var(--text3)">Visa · Mastercard</div></div>
+        <div class="pay-radio"></div>
+      </div>
+    </div>
+    <div class="card-bg" style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:18px">🔒</span>
+      <div style="font-size:12px;color:var(--text2)">Procesado por <strong>Culqi</strong> · SSL 256 bits · Datos nunca guardados</div>
+    </div>
+  </div>
+  <div class="footer">
+    <button class="btn btn-blue" id="pay-btn" onclick="doPay()">Pagar y confirmar reserva</button>
+  </div>
+</div>
+
+<!-- ⑦ TRACKING -->
+<div class="screen" id="s-tracking">
+  <div class="sbar"><span>10:52 PM</span><span>●●● 92%</span></div>
+  <div class="topbar"><div class="toptitle">Técnico en camino</div></div>
+  <div class="map-area" id="map-area">
+    <svg width="100%" height="100%" style="position:absolute;top:0;left:0;opacity:.45">
+      <line x1="0" y1="75" x2="359" y2="75" stroke="#b0c0d8" stroke-width="2"/>
+      <line x1="0" y1="135" x2="359" y2="135" stroke="#b0c0d8" stroke-width="2"/>
+      <line x1="90" y1="0" x2="90" y2="196" stroke="#b0c0d8" stroke-width="2"/>
+      <line x1="230" y1="0" x2="230" y2="196" stroke="#b0c0d8" stroke-width="2"/>
+      <rect x="16" y="16" width="58" height="48" rx="4" fill="#c8d5e5" opacity=".7"/>
+      <rect x="110" y="8" width="78" height="58" rx="4" fill="#c8d5e5" opacity=".7"/>
+      <rect x="16" y="95" width="58" height="36" rx="4" fill="#c8d5e5" opacity=".7"/>
+      <rect x="248" y="16" width="68" height="44" rx="4" fill="#c8d5e5" opacity=".7"/>
+      <rect x="110" y="148" width="78" height="38" rx="4" fill="#c8d5e5" opacity=".7"/>
+      <rect x="248" y="96" width="60" height="46" rx="4" fill="#c8d5e5" opacity=".7"/>
+    </svg>
+    <div class="track-dot" id="t-dot" style="left:24px;top:24px"></div>
+    <div style="position:absolute;right:48px;bottom:34px;font-size:26px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.2))">📍</div>
+  </div>
+  <div class="track-card">
+    <div style="display:flex;align-items:center;gap:13px">
+      <img class="avatar" id="tr-photo" src="" style="width:50px;height:50px" alt=""/>
+      <div style="flex:1">
+        <div style="font-size:15px;font-weight:700;color:var(--text)" id="tr-name"></div>
+        <div style="font-size:12px;color:var(--text3)" id="tr-spec"></div>
+        <div class="vbadge" style="margin-top:4px">🛡️ Verificado</div>
+      </div>
+      <div style="text-align:center;background:var(--blue-l);border-radius:12px;padding:10px 14px">
+        <div style="font-size:26px;font-weight:900;color:var(--blue)" id="eta">28</div>
+        <div style="font-size:10px;color:var(--text3);font-weight:600">min</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll px" style="padding-top:14px;padding-bottom:20px;display:flex;flex-direction:column;gap:12px">
+    <div class="card-green" style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:20px">💰</span>
+      <div><div style="font-size:13px;font-weight:700;color:var(--green)">Tu dinero está protegido</div><div style="font-size:12px;color:var(--text2);margin-top:1px">S/<span id="tr-amt"></span> retenidos · Se libera con tu confirmación</div></div>
+    </div>
+    <div class="card-bg" style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px" id="tr-icon">💧</span>
+      <div><div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:2px">Problema registrado</div><div style="font-size:14px;font-weight:600;color:var(--text)" id="tr-prob">Fuga de agua</div></div>
+    </div>
+    <div style="font-size:13px;color:var(--text3);text-align:center;line-height:1.6">
+      Recibirás una notificación cuando <span id="tr-fname"></span> esté llegando.
+    </div>
+  </div>
+</div>
+
+<!-- ⑧ DOOR -->
+<div class="screen" id="s-door">
+  <div class="sbar"><span>11:23 PM</span><span>●●● 92%</span></div>
+  <div class="topbar"><div class="toptitle">Verificación en puerta</div></div>
+  <div class="px" style="margin-bottom:4px">
+    <div style="padding:10px 13px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px;display:flex;align-items:center;gap:9px">
+      <span style="font-size:16px">⚠️</span>
+      <div style="font-size:12px;color:#92400e;font-weight:600">Confirma que sea el mismo técnico antes de abrir</div>
+    </div>
+  </div>
+  <div class="door-frame">
+    <img class="door-img" id="d-photo" src="" alt=""/>
+    <div style="position:absolute;top:10px;right:10px;background:rgba(0,201,167,.9);border-radius:8px;padding:4px 9px;display:flex;align-items:center;gap:5px">
+      <span style="font-size:11px">🛡️</span><span style="font-size:11px;font-weight:700;color:#fff">Verificado REPARA</span>
+    </div>
+  </div>
+  <div class="px" style="padding-top:14px">
+    <div style="text-align:center;margin-bottom:12px">
+      <div style="font-size:20px;font-weight:900;color:var(--text)" id="d-name"></div>
+      <div style="font-size:13px;color:var(--text3);margin-top:3px" id="d-spec"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <div style="flex:1;background:var(--bg);border-radius:11px;padding:11px;text-align:center"><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:3px">DNI</div><div style="font-size:13px;font-weight:700;color:var(--text)" id="d-dni"></div></div>
+      <div style="flex:1;background:var(--bg);border-radius:11px;padding:11px;text-align:center"><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:3px">Antecedentes</div><div style="font-size:13px;font-weight:700;color:var(--green)">Limpios ✓</div></div>
+      <div style="flex:1;background:var(--bg);border-radius:11px;padding:11px;text-align:center"><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:3px">Trabajos</div><div style="font-size:13px;font-weight:700;color:var(--text)" id="d-jobs"></div></div>
+    </div>
+    <div style="font-size:12px;color:var(--text3);text-align:center;line-height:1.6">La foto fue validada contra su DNI. Si no coincide con quien ves, <strong style="color:var(--red)">no abras</strong>.</div>
+  </div>
+  <div class="footer gap" style="gap:8px">
+    <button class="btn btn-blue" onclick="go('completion');initCompl()">✓ Es él, le abro la puerta</button>
+    <button class="btn btn-danger" onclick="alert('Reporte enviado. Nuestro equipo te contacta en 2 min. El pago sigue retenido.')">No es la misma persona</button>
+  </div>
+</div>
+
+<!-- ⑨ COMPLETION -->
+<div class="screen" id="s-completion">
+  <div class="sbar"><span>11:52 PM</span><span>●●● 92%</span></div>
+  <div class="topbar"><div style="font-size:19px;font-weight:900;color:var(--text)">REPARA<span style="color:var(--teal)">.</span></div></div>
+  <div class="scroll px" id="compl-body" style="padding-top:8px;padding-bottom:100px"></div>
+  <div class="footer" id="compl-footer"></div>
+</div>
+
+<!-- ⑩ SAVED -->
+<div class="screen" id="s-saved">
+  <div class="sbar"><span>11:54 PM</span><span>●●● 92%</span></div>
+  <div class="topbar topbar-between">
+    <button class="back" onclick="go('home')">←</button>
+    <div class="toptitle">Mis Técnicos</div>
+    <div style="width:36px"></div>
+  </div>
+  <div class="scroll px" style="padding-top:14px;padding-bottom:20px" id="saved-list"></div>
+</div>
+
+</div></div><!-- /phone-frame /phone-wrap -->
+
+<!-- MODAL verified -->
+<div class="modal-bg" id="vmodal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <span style="font-size:26px">🛡️</span>
+      <div><div style="font-size:18px;font-weight:800;color:var(--text)">Expediente verificado</div><div style="font-size:13px;color:var(--text3)" id="vm-name"></div></div>
+    </div>
+    <div id="vm-items" class="gap" style="gap:10px"></div>
+    <button class="btn btn-blue" style="margin-top:18px" onclick="closeModal()">Entendido</button>
+  </div>
+</div>
+
+<script>
+const techs=[
+  {id:"t1",name:"Jorge Mendoza",spec:"Gasfitero",cat:"gasfiteria",rating:4.9,jobs:47,pMin:120,pMax:160,dist:"San Isidro",avail:true,exp:6,photo:"https://i.pravatar.cc/150?img=1"},
+  {id:"t2",name:"Rubén López",spec:"Gasfitero",cat:"gasfiteria",rating:4.8,jobs:31,pMin:130,pMax:170,dist:"San Isidro",avail:true,exp:9,photo:"https://i.pravatar.cc/150?img=2"},
+  {id:"t3",name:"Carlos García",spec:"Gasfitero",cat:"gasfiteria",rating:4.7,jobs:18,pMin:110,pMax:150,dist:"Miraflores",avail:true,exp:4,photo:"https://i.pravatar.cc/150?img=3"},
+  {id:"t4",name:"Luis Ramírez",spec:"Gasfitero",cat:"gasfiteria",rating:4.6,jobs:22,pMin:100,pMax:140,dist:"Barranco",avail:false,exp:5,photo:"https://i.pravatar.cc/150?img=4"},
+  {id:"t5",name:"Miguel Torres",spec:"Gasfitero",cat:"gasfiteria",rating:4.9,jobs:52,pMin:140,pMax:180,dist:"Surco",avail:true,exp:10,photo:"https://i.pravatar.cc/150?img=5"},
+  {id:"t6",name:"Pedro Castillo",spec:"Electricista",cat:"electricidad",rating:4.8,jobs:38,pMin:100,pMax:140,dist:"Miraflores",avail:true,exp:7,photo:"https://i.pravatar.cc/150?img=6"},
+  {id:"t7",name:"Andrés Silva",spec:"Electricista",cat:"electricidad",rating:4.7,jobs:28,pMin:90,pMax:130,dist:"San Isidro",avail:true,exp:5,photo:"https://i.pravatar.cc/150?img=7"},
+  {id:"t8",name:"Ricardo Vega",spec:"Electricista",cat:"electricidad",rating:4.6,jobs:21,pMin:80,pMax:120,dist:"Barranco",avail:false,exp:4,photo:"https://i.pravatar.cc/150?img=8"},
+  {id:"t9",name:"Fernando Díaz",spec:"Cerrajero",cat:"cerrajeria",rating:4.9,jobs:33,pMin:80,pMax:120,dist:"Surco",avail:true,exp:8,photo:"https://i.pravatar.cc/150?img=9"},
+  {id:"t10",name:"Héctor Cruz",spec:"Cerrajero",cat:"cerrajeria",rating:4.7,jobs:19,pMin:70,pMax:110,dist:"Miraflores",avail:true,exp:5,photo:"https://i.pravatar.cc/150?img=10"},
+  {id:"t11",name:"Diego Paredes",spec:"Técnico A/C",cat:"ac",rating:4.8,jobs:34,pMin:120,pMax:170,dist:"San Isidro",avail:true,exp:6,photo:"https://i.pravatar.cc/150?img=11"},
+  {id:"t12",name:"José Rojas",spec:"Técnico A/C",cat:"ac",rating:4.6,jobs:21,pMin:110,pMax:150,dist:"Surco",avail:true,exp:5,photo:"https://i.pravatar.cc/150?img=12"},
+];
+const reviews={
+  t1:[{a:"María T.",d:"Miraflores",dt:"14/03",tx:"Llegó en 25 min, me mostró DNI antes de entrar. Arregló la fuga en 40 min. Precio exacto.",r:5},{a:"Luciana A.",d:"San Isidro",dt:"28/03",tx:"A las 10:30pm había técnico disponible. Profesional y rápido.",r:5}],
+  t5:[{a:"Daniela F.",d:"Surco",dt:"18/03",tx:"10 años de experiencia se notan. Diagnosticó en 5 min, resolvió en 30.",r:5}],
+  t6:[{a:"Carmen R.",d:"Miraflores",dt:"20/03",tx:"Se fue la luz a las 9pm. Llegó en 20 min y lo solucionó. Increíble.",r:5}],
+};
+const catInfo={
+  gasfiteria:{l:"Gasfitería",i:"💧"},
+  electricidad:{l:"Electricidad",i:"⚡"},
+  cerrajeria:{l:"Cerrajería",i:"🔑"},
+  ac:{l:"Aire Acondicionado",i:"❄️"},
+};
+const catMap={
+  gasfiteria:["fuga","caño","tubo","agua","baño","inodoro","lavatorio","grifo","desagüe","cañería","humedad","gotea","plomería","gasfitero"],
+  electricidad:["luz","eléctri","corriente","enchufe","breaker","cable","apagado","tomacorriente","voltaje","electricidad","corte","interruptor"],
+  cerrajeria:["llave","cerradura","puerta","candado","traba","cerrar","abrir","perdí","cerrajero"],
+  ac:["calor","frío","aire acondicionado","ac","a/c","ventilación","clima","temperatura","enfría"],
+};
+const dists=["San Isidro","Miraflores","Barranco","Surco"];
+
+let prob="", cat=null, zone="San Isidro", selTech=techs[0];
+let etaV=28, etaIv=null, dotP={x:24,y:24};
+let complPhase="confirm", stars=0, saved=[];
+
+const fn=t=>t.name.split(" ")[0];
+const escrow=t=>Math.round((t.pMin+t.pMax)/2);
+const dni=t=>"****"+String(1000+parseInt(t.id.replace("t",""))*73).slice(-4);
+const det=txt=>{txt=txt.toLowerCase();for(const[c,ws]of Object.entries(catMap)){if(ws.some(w=>txt.includes(w)))return c;}return null;};
+
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const ids=['home','matching','list','profile','booking','payment','tracking','door','completion','saved'];
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',ids[i]===id));
+  document.getElementById('s-'+id).classList.add('active');
+  if(id==='tracking')initTrack();
+  if(id==='door')initDoor();
+  if(id==='saved')renderSaved();
+}
+
+// HOME
+function onProbInput(v){
+  prob=v;
+  const btn=document.getElementById('search-btn');
+  const ok=v.trim().length>2;
+  btn.disabled=!ok;btn.style.opacity=ok?'1':'.4';
+}
+function setChip(txt,c){
+  document.getElementById('prob-input').value=txt;
+  prob=txt;cat=c;onProbInput(txt);
+}
+function startSearch(){
+  if(!prob.trim())return;
+  cat=det(prob)||'gasfiteria';
+  const ci=catInfo[cat];
+  document.getElementById('m-prob').textContent=prob;
+  document.getElementById('m-icon').textContent=ci.i;
+  document.getElementById('ms1-lbl').textContent='Problema identificado: '+ci.l;
+  go('matching');
+  [1,2,3].forEach((n,i)=>setTimeout(()=>document.getElementById('ms'+n).classList.add('show'),300+i*500));
+  setTimeout(()=>{renderList();go('list');},2200);
+}
+
+// LIST
+function renderList(){
+  const ci=catInfo[cat]||catInfo.gasfiteria;
+  const match=techs.filter(t=>t.cat===cat);
+  const avail=match.filter(t=>t.avail&&t.dist===zone);
+  document.getElementById('list-title').textContent=avail.length+' técnicos disponibles';
+  document.getElementById('list-sub').textContent='Para "'+prob+'" · '+ci.i+' '+ci.l;
+  document.getElementById('zone-chips').innerHTML=dists.map(d=>{
+    const n=match.filter(t=>t.avail&&t.dist===d).length;
+    return`<div class="chip${d===zone?' on':''}" onclick="selZone('${d}')">${d} (${n})</div>`;
+  }).join('');
+  const byZone=match.filter(t=>t.dist===zone).sort((a,b)=>a.avail===b.avail?b.rating-a.rating:a.avail?-1:1);
+  document.getElementById('tech-list').innerHTML=byZone.length?byZone.map(tCardHTML).join(''):`<div style="text-align:center;padding:40px 20px;color:var(--text3)"><div style="font-size:40px;margin-bottom:12px">😔</div><div style="font-size:15px;font-weight:700;color:var(--text)">Sin técnicos en ${zone}</div><div style="font-size:13px;margin-top:8px">Prueba en otra zona</div></div>`;
+}
+function tCardHTML(t){
+  return`<div class="tcard" onclick="pickTech('${t.id}')">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <img class="avatar" src="${t.photo}" style="width:54px;height:54px" alt="${t.name}"/>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:15px;font-weight:700;color:var(--text)">${t.name}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">${t.spec} · ${t.exp} años</div>
+        <div class="vbadge" style="margin-top:4px">🛡️ Verificado</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:${t.avail?'var(--green)':'var(--text3)'}">
+            <span class="avail-dot" style="background:${t.avail?'var(--green)':'var(--text4)'}"></span>${t.avail?'Disponible ahora':'Ocupado'}
+          </span>
+          <span style="font-size:11px;color:var(--text3)">· ⭐ ${t.rating} (${t.jobs})</span>
+        </div>
+      </div>
+      <div class="price-box"><div style="font-size:11px;color:var(--text3)">desde</div><div style="font-size:16px;font-weight:800;color:var(--text)">S/${t.pMin}</div><div style="font-size:10px;color:var(--text3)">a S/${t.pMax}</div></div>
+    </div>
+    ${t.avail?`<div style="margin-top:10px;border-top:1px solid var(--bg2);padding-top:10px;display:flex;align-items:center;justify-content:space-between"><span style="font-size:12px;color:var(--text3)">🕐 Llega en ~${20+Math.floor(Math.random()*15)} min</span><span style="font-size:12px;font-weight:700;color:var(--blue)">Ver perfil →</span></div>`:''}
+  </div>`;
+}
+function selZone(z){zone=z;renderList();}
+function pickTech(id){selTech=techs.find(t=>t.id===id)||techs[0];renderProf();go('profile');}
+
+// PROFILE
+function renderProf(){
+  const t=selTech;
+  document.getElementById('pp-photo').src=t.photo;
+  document.getElementById('pp-name').textContent=t.name;
+  document.getElementById('pp-spec').textContent=t.spec+' · '+t.exp+' años';
+  document.getElementById('pp-stars').textContent='⭐ '+t.rating;
+  document.getElementById('pp-jobs').textContent=t.jobs+' trabajos';
+  document.getElementById('pp-price').textContent='S/'+t.pMin+' – S/'+t.pMax;
+  document.getElementById('pp-stats').innerHTML=`<div class="stat-it"><div style="font-size:16px;font-weight:800;color:var(--text)">${t.rating}</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Rating</div></div><div class="stat-div"></div><div class="stat-it"><div style="font-size:16px;font-weight:800;color:var(--text)">${t.jobs}</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Trabajos</div></div><div class="stat-div"></div><div class="stat-it"><div style="font-size:16px;font-weight:800;color:var(--text)">${t.exp}a</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Exp.</div></div><div class="stat-div"></div><div class="stat-it"><div style="font-size:16px;font-weight:800;color:var(--green)">✓</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Verif.</div></div>`;
+  const rvs=reviews[t.id]||[{a:"Ana P.",d:t.dist,dt:"15/03",tx:"Muy buen servicio, llegó rápido y resolvió sin complicaciones.",r:5}];
+  document.getElementById('pp-reviews').innerHTML=rvs.map(r=>`<div style="background:var(--bg);border-radius:13px;padding:13px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.a} · ${r.d}</div><div style="color:var(--orange);font-size:12px">${'★'.repeat(r.r)}</div></div><div style="font-size:13px;color:var(--text2);line-height:1.5;margin-top:5px">${r.tx}</div><div style="font-size:11px;color:var(--text3);margin-top:4px">${r.dt}</div></div>`).join('');
+  // populate booking
+  const ci=catInfo[cat]||catInfo.gasfiteria;
+  document.getElementById('bk-icon').textContent=ci.i;
+  document.getElementById('bk-prob').textContent=prob||'Fuga de agua';
+  document.getElementById('bk-cat').textContent=ci.l;
+  document.getElementById('bk-photo').src=t.photo;
+  document.getElementById('bk-name').textContent=t.name;
+  document.getElementById('bk-spec').textContent=t.spec;
+  document.getElementById('bk-rating').textContent='⭐ '+t.rating;
+  document.getElementById('bk-price').textContent='S/'+t.pMin+' – S/'+t.pMax;
+  document.getElementById('bk-footer-price').textContent=escrow(t);
+  document.getElementById('pay-amt').textContent=escrow(t);
+}
+
+// MODAL
+function openModal(){
+  const t=selTech;
+  document.getElementById('vm-name').textContent=t.name+' · '+t.spec;
+  document.getElementById('vm-items').innerHTML=[
+    {icon:'✓',title:'Antecedentes penales: limpios',sub:'Verificado 12/03/2026 · PNP'},
+    {icon:'✓',title:'Identidad: DNI '+dni(t),sub:'Validado con RENIEC · Foto coincide'},
+    {icon:'✓',title:t.jobs+' trabajos en REPARA',sub:'Sin incidentes · '+t.rating+' ⭐ promedio'},
+  ].map(it=>`<div style="display:flex;align-items:flex-start;gap:12px;background:var(--bg);border-radius:12px;padding:12px"><div style="width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${it.icon}</div><div><div style="font-size:13px;font-weight:700;color:var(--text)">${it.title}</div><div style="font-size:12px;color:var(--text3);margin-top:2px">${it.sub}</div></div></div>`).join('');
+  document.getElementById('vmodal').classList.add('open');
+}
+function closeModal(){document.getElementById('vmodal').classList.remove('open');}
+
+// PAYMENT
+function selPay(el){document.querySelectorAll('.pay-row').forEach(r=>r.classList.remove('sel'));el.classList.add('sel');}
+function doPay(){
+  const btn=document.getElementById('pay-btn');btn.textContent='Procesando...';btn.disabled=true;btn.style.opacity='.7';
+  setTimeout(()=>{go('tracking');btn.textContent='Pagar y confirmar reserva';btn.disabled=false;btn.style.opacity='1';},1500);
+}
+
+// TRACKING
+function initTrack(){
+  const t=selTech;
+  document.getElementById('tr-photo').src=t.photo;
+  document.getElementById('tr-name').textContent=t.name;
+  document.getElementById('tr-spec').textContent=t.spec;
+  document.getElementById('tr-amt').textContent=escrow(t);
+  document.getElementById('tr-fname').textContent=fn(t);
+  const ci=catInfo[cat]||catInfo.gasfiteria;
+  document.getElementById('tr-icon').textContent=ci.i;
+  document.getElementById('tr-prob').textContent=prob||'Fuga de agua';
+  if(etaIv)clearInterval(etaIv);
+  etaV=28;dotP={x:24,y:24};tickEta();
+  etaIv=setInterval(()=>{
+    etaV--;dotP.x=Math.min(dotP.x+8.5,252);dotP.y=Math.min(dotP.y+4.8,126);
+    tickEta();if(etaV<=0){clearInterval(etaIv);setTimeout(()=>go('door'),600);}
+  },200);
+}
+function tickEta(){
+  document.getElementById('eta').textContent=Math.max(etaV,0);
+  const d=document.getElementById('t-dot');if(d){d.style.left=dotP.x+'px';d.style.top=dotP.y+'px';}
+}
+
+// DOOR
+function initDoor(){
+  const t=selTech;
+  document.getElementById('d-photo').src=t.photo;
+  document.getElementById('d-name').textContent=t.name;
+  document.getElementById('d-spec').textContent=t.spec+' · '+t.exp+' años';
+  document.getElementById('d-dni').textContent=dni(t);
+  document.getElementById('d-jobs').textContent=t.jobs;
+}
+
+// COMPLETION
+function initCompl(){complPhase='confirm';stars=0;renderCompl();}
+function renderCompl(){
+  const t=selTech,amt=escrow(t),ci=catInfo[cat]||catInfo.gasfiteria;
+  const gDate=new Date(Date.now()+30*24*60*60*1000).toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const body=document.getElementById('compl-body'),footer=document.getElementById('compl-footer');
+  if(complPhase==='confirm'){
+    body.innerHTML=`<div style="text-align:center;padding:20px 0 14px"><div style="font-size:52px;margin-bottom:14px">🔧</div><div style="font-size:23px;font-weight:900;color:var(--text);letter-spacing:-.02em">¿El trabajo quedó bien?</div><div style="font-size:14px;color:var(--text2);margin-top:8px;line-height:1.6">Si confirmas, liberamos S/${amt} a ${fn(t)}<br>y activamos tu garantía de 30 días.</div></div>
+    <div class="card-bg" style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><span style="font-size:22px">${ci.i}</span><div><div style="font-size:13px;font-weight:700;color:var(--text)">${prob||'Fuga de agua'}</div><div style="font-size:12px;color:var(--text3)">Resuelto por ${t.name}</div></div></div>
+    <div class="card-bg" style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">💰</span><div style="font-size:13px;color:var(--text2)">S/${amt} retenidos · Solo se libera con tu OK</div></div>`;
+    footer.innerHTML=`<button class="btn btn-green" onclick="complPhase='rate';renderCompl()">✓ Sí, quedó bien — pagar a ${fn(t)}</button><button class="btn btn-danger" style="margin-top:8px" onclick="alert('Reporte registrado. Te contactamos en menos de 2h.')">⚠️ Hay un problema</button>`;
+  } else if(complPhase==='rate'){
+    body.innerHTML=`<div class="card-green" style="display:flex;align-items:center;gap:13px;margin-bottom:12px"><span style="font-size:26px">💸</span><div><div style="font-size:15px;font-weight:800;color:var(--text)">¡Listo! Pagamos a ${fn(t)}.</div><div style="font-size:13px;color:var(--text3);margin-top:2px">S/${Math.round(amt*.85)} netos transferidos.</div></div></div>
+    <div class="card-teal" style="margin-bottom:12px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="font-size:20px">🛡️</span><div><div style="font-size:14px;font-weight:800;color:var(--teal)">Garantía activada</div><div style="font-size:12px;color:var(--text3);margin-top:1px">Hasta ${gDate}</div></div></div><div style="font-size:13px;color:var(--text2);line-height:1.5">Si el problema reaparece, ${fn(t)} vuelve sin costo adicional.</div></div>
+    <div style="margin-top:4px"><div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px">¿Qué tal fue el servicio?</div><div class="star-sel" id="star-sel">${[1,2,3,4,5].map(n=>`<span class="star${n<=stars?' on':''}" onclick="setStar(${n})">★</span>`).join('')}</div><textarea id="rv-txt" placeholder='"Llegó puntual, explicó lo que hizo, el precio fue justo"' style="width:100%;margin-top:13px;padding:13px;background:var(--bg);border:1.5px solid #eef1f6;border-radius:13px;font-size:14px;font-family:Inter,sans-serif;color:var(--text);resize:none;min-height:78px;outline:none;line-height:1.5" maxlength="140"></textarea><div style="font-size:11px;color:var(--text3);text-align:right;margin-top:3px">máx 140</div></div>`;
+    footer.innerHTML=`<button class="btn btn-blue" onclick="submitStar()">Publicar reseña</button><button class="btn btn-ghost" onclick="complPhase='done';renderCompl()">Ahora no</button>`;
+  } else {
+    body.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding:24px 0"><div style="font-size:62px">🎉</div><div style="font-size:26px;font-weight:900;color:var(--text);letter-spacing:-.02em">¡Problema resuelto!</div><div style="font-size:14px;color:var(--text2);line-height:1.6">Esta emergencia te dejó con un técnico de confianza para siempre.</div><div class="card" style="width:100%;display:flex;align-items:center;gap:13px"><img class="avatar" src="${t.photo}" style="width:46px;height:46px"/><div style="text-align:left"><div style="font-size:14px;font-weight:700;color:var(--text)">${t.name}</div><div style="font-size:12px;color:var(--text3);margin-top:1px">${t.spec} · ⭐ ${t.rating}</div></div></div></div>`;
+    footer.innerHTML=`<button class="btn btn-teal" onclick="saveAndGo()">Guardar a ${fn(t)} como mi técnico</button><button class="btn btn-ghost" onclick="go('home')">Volver al inicio</button>`;
+  }
+}
+function setStar(n){stars=n;document.getElementById('star-sel').innerHTML=[1,2,3,4,5].map(i=>`<span class="star${i<=stars?' on':''}" onclick="setStar(${i})">★</span>`).join('');}
+function submitStar(){if(stars===0){alert('Selecciona al menos 1 estrella');return;}complPhase='done';renderCompl();}
+function saveAndGo(){if(!saved.find(t=>t.id===selTech.id))saved.push({...selTech});renderSaved();go('saved');}
+
+// SAVED
+function renderSaved(){
+  const el=document.getElementById('saved-list');
+  if(!saved.length){
+    el.innerHTML=`<div style="text-align:center;padding:60px 20px 20px"><div style="font-size:46px;margin-bottom:14px">🔧</div><div style="font-size:18px;font-weight:800;color:var(--text)">Sin técnicos guardados aún</div><div style="font-size:13px;color:var(--text3);margin-top:8px;line-height:1.6">Después de tu primer servicio podrás guardar al técnico aquí.</div><button class="btn btn-blue" style="margin-top:22px" onclick="go('home')">Buscar un técnico</button></div>`;
+    return;
+  }
+  const slotIcons=[{i:'⚡',l:'Agregar electricista'},{i:'🔑',l:'Agregar cerrajero'},{i:'❄️',l:'Agregar técnico A/C'}];
+  el.innerHTML=`<div class="sec-label" style="margin-bottom:14px">${saved.length} técnico${saved.length!==1?'s':''} guardado${saved.length!==1?'s':''}</div>
+  ${saved.map(t=>`<div style="display:flex;align-items:center;gap:13px;padding:15px;background:var(--white);border:1.5px solid #eef1f6;border-radius:17px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.05)"><img class="avatar" src="${t.photo}" style="width:50px;height:50px"/><div style="flex:1"><div style="font-size:15px;font-weight:700;color:var(--text)">${t.name}</div><div style="font-size:12px;color:var(--text3);margin-top:2px">${t.spec} · ⭐ ${t.rating}</div><div class="vbadge" style="margin-top:4px">🛡️ Verificado</div></div><button class="btn btn-blue btn-sm" onclick="reBook('${t.id}')">Reservar</button></div>`).join('')}
+  <div class="sec-label" style="margin-top:8px;margin-bottom:12px">Agregar más</div>
+  ${slotIcons.map(s=>`<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px dashed #d1d9e6;border-radius:13px;cursor:pointer;margin-bottom:8px" onclick="go('home')"><div style="width:38px;height:38px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:17px">${s.i}</div><span style="font-size:14px;color:var(--text3);font-weight:500">${s.l}</span></div>`).join('')}`;
+}
+function reBook(id){
+  selTech=techs.find(t=>t.id===id)||techs[0];
+  prob='Servicio de '+selTech.spec.toLowerCase();
+  cat=selTech.cat;
+  renderProf();go('booking');
+}
+
+go('home');
+</script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REPARA — Mapa de Proceso BPMN</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #F1F5F9;
+      color: #1E293B;
+      padding: 36px 24px 48px;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .brand-pill {
+      display: inline-block;
+      background: linear-gradient(135deg, #7C3AED, #6D28D9);
+      color: #fff;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 3px;
+      padding: 5px 18px;
+      border-radius: 100px;
+      margin-bottom: 14px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0F172A;
+      margin-bottom: 6px;
+    }
+    .page-meta {
+      font-size: 13px;
+      color: #64748B;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .page-meta span { display: flex; align-items: center; gap: 5px; }
+
+    /* ── Legend ── */
+    .legend-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 20px;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 24px;
+      padding: 14px 24px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      max-width: 860px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .legend-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #94A3B8;
+      margin-right: 4px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12.5px;
+      color: #334155;
+      font-weight: 500;
+    }
+    .chip {
+      width: 26px;
+      height: 14px;
+      border-radius: 4px;
+      border: 2px solid;
+      flex-shrink: 0;
+    }
+    .chip-diamond {
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      border: 2px solid #D97706;
+      background: #FEF3C7;
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+    .chip-circle {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2.5px solid #16A34A;
+      background: #F0FDF4;
+      flex-shrink: 0;
+    }
+    .divider {
+      width: 1px;
+      height: 18px;
+      background: #E2E8F0;
+    }
+
+    /* ── Phase timeline ── */
+    .phase-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 16px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .phase-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 5px 14px;
+      border-radius: 100px;
+      white-space: nowrap;
+      border: 1.5px solid;
+    }
+    .ph1 { background:#FFF7ED; border-color:#F97316; color:#9A3412; }
+    .ph2 { background:#F0FDF4; border-color:#22C55E; color:#14532D; }
+    .ph3 { background:#EFF6FF; border-color:#3B82F6; color:#1E3A8A; }
+    .ph4 { background:#FDF4FF; border-color:#A855F7; color:#581C87; }
+    .ph5 { background:#ECFDF5; border-color:#10B981; color:#064E3B; }
+    .ph6 { background:#FFF1F2; border-color:#F43F5E; color:#881337; }
+    .ph7 { background:#F8FAFC; border-color:#64748B; color:#1E293B; }
+    .phase-arrow {
+      align-self: center;
+      color: #CBD5E1;
+      font-size: 14px;
+      padding: 0 4px;
+    }
+
+    /* ── Diagram wrapper ── */
+    .diagram-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 6px 24px rgba(0,0,0,0.04);
+      overflow-x: auto;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .diagram-card .mermaid {
+      display: flex;
+      justify-content: center;
+      min-width: 900px;
+    }
+
+    /* ── Swim lane labels ── */
+    .swimlane-labels {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: absolute;
+    }
+
+    /* ── Touch points table ── */
+    .touchpoints {
+      max-width: 860px;
+      margin: 28px auto 0;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+    .tp-title {
+      padding: 14px 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748B;
+      background: #F8FAFC;
+      border-bottom: 1px solid #E2E8F0;
+    }
+    .tp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    .tp-cell {
+      padding: 12px 16px;
+      border-right: 1px solid #F1F5F9;
+      border-bottom: 1px solid #F1F5F9;
+      font-size: 12px;
+    }
+    .tp-cell:last-child { border-right: none; }
+    .tp-phase {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 3px;
+    }
+    .tp-emotion {
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 2px;
+    }
+    .tp-desc { color: #64748B; font-size: 11px; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      font-size: 11.5px;
+      color: #94A3B8;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="brand-pill">REPARA</div>
+    <h1 class="page-title">Happy Path — Mapa de Proceso BPMN</h1>
+    <div class="page-meta">
+      <span>👤 ICP: Carolina, 32 años, San Isidro</span>
+      <span>⚡ Trigger: Emergencia doméstica a las 10:17pm</span>
+      <span>💸 WTP: S/150–200</span>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend-bar">
+    <span class="legend-label">Actores</span>
+    <div class="legend-item">
+      <div class="chip" style="background:#DBEAFE;border-color:#3B82F6;"></div>
+      👤 Carolina — Usuario
+    </div>
+    <div class="legend-item">
+      <div class="chip" style="background:#EDE9FE;border-color:#7C3AED;"></div>
+      🔷 App REPARA — Sistema
+    </div>
+    <div class="legend-item">
+      <div class="chip" style="background:#D1FAE5;border-color:#059669;"></div>
+      🔧 Carlos — Técnico
+    </div>
+    <div class="divider"></div>
+    <span class="legend-label">Símbolos</span>
+    <div class="legend-item">
+      <div class="chip-diamond"></div>
+      Gateway / Decisión
+    </div>
+    <div class="legend-item">
+      <div class="chip-circle"></div>
+      Inicio / Fin
+    </div>
+    <div class="legend-item" style="gap:5px;">
+      <span style="color:#94A3B8;font-size:18px;line-height:1;">⤍</span>
+      Interacción entre actores
+    </div>
+  </div>
+
+  <!-- Phase timeline -->
+  <div class="phase-bar">
+    <span class="phase-tag ph1">1 · Disparador</span>
+    <span class="phase-arrow">›</span>
+    <span class="phase-tag ph2">2 · Onboarding</span>
+    <span class="phase-arrow">›</span>
+    <span class="phase-tag ph3">3 · Selección</span>
+    <span class="phase-arrow">›</span>
+    <span class="phase-tag ph4">4 · Reserva y Pago</span>
+    <span class="phase-arrow">›</span>
+    <span class="phase-tag ph5">5 · Entrega</span>
+    <span class="phase-arrow">›</span>
+    <span class="phase-tag ph6">6 · Cierre</span>
+    <span class="phase-arrow">›</span>
+    <span class="phase-tag ph7">7 · Retención</span>
+  </div>
+
+  <!-- Mermaid Diagram -->
+  <div class="diagram-card">
+    <div class="mermaid">
+flowchart TB
+
+    subgraph CAROLINA["👤  CAROLINA — USUARIO"]
+        direction LR
+        C_START(["▶ INICIO"]):::event
+        C1["🚿 Problema doméstico\n10:17 pm — sola en casa"]:::user
+        C2["🔍 Busca en Google:\ngasfitero emergencia Lima"]:::user
+        C3["📱 Descarga REPARA\ny se registra"]:::user
+        C4["🏷️ Selecciona categoría:\nGasfitería › Desagüe atorado"]:::user
+        C5["👁️ Revisa portafolio\ny reseñas de Carlos M."]:::user
+        GW{"¿Confía\nen el técnico?"}:::gateway
+        C6["✋ Solicita a Carlos M.\n4.9 ★ · 47 trabajos · S/120–160"]:::user
+        C7["💸 Paga S/150\nvía Yape — escrow activado"]:::user
+        C8["📍 Monitorea mapa\nen vivo"]:::user
+        C9["🚪 Abre la puerta\ncon confianza"]:::user
+        C10["👍 Confirma:\nEl trabajo quedó bien"]:::user
+        C11["⭐ Deja reseña\n+ foto del resultado"]:::user
+        C_END(["⏹ FIN\nRelación iniciada"]):::event
+
+        C_START --> C1 --> C2 --> C3 --> C4 --> C5 --> GW
+        GW -->|"Sí — confía ✓"| C6
+        GW -->|"No, sigue buscando"| C5
+        C6 --> C7 --> C8 --> C9 --> C10 --> C11 --> C_END
+    end
+
+    subgraph APP["🔷  APP REPARA — SISTEMA"]
+        direction LR
+        A1["✅ Muestra 5 técnicos\ndisponibles en la zona"]:::system
+        A2["👥 Perfiles verificados\ncon precios estimados"]:::system
+        A3["📋 Resumen del servicio:\nprecio + escrow explicado"]:::system
+        A4["🔒 Escrow activado\nS/150 protegido"]:::system
+        A5["📲 Notificación\na Carlos"]:::system
+        A6["🗺️ Tracking en vivo\nactivado"]:::system
+        A7["📲 Push: Carlos está\nen tu edificio"]:::system
+        A8["📲 Push: ¿Cómo quedó\nel trabajo?"]:::system
+        A9["⏳ Escrow liberado\na Carlos en 7 días"]:::system
+        A10["🛡️ Garantía de trabajo\nactivada: 30–60 días"]:::system
+        A11["💾 Carlos guardado\ncomo Mi Técnico"]:::system
+
+        A1 --> A2 --> A3 --> A4 --> A5 --> A6 --> A7 --> A8 --> A9 --> A10 --> A11
+    end
+
+    subgraph CARLOS["🔧  CARLOS — TÉCNICO"]
+        direction LR
+        T1["🔔 Recibe solicitud\nde trabajo"]:::tech
+        T2["✅ Acepta solicitud\ny confirma llegada"]:::tech
+        T3["🚗 En camino\nal domicilio"]:::tech
+        T4["🪪 Llega · muestra perfil\nREPARA verificado"]:::tech
+        T5["🔧 Ejecuta el trabajo\n+ foto antes de iniciar"]:::tech
+        T6["✅ Marca trabajo\ncomo completado"]:::tech
+
+        T1 --> T2 --> T3 --> T4 --> T5 --> T6
+    end
+
+    %% ── Interacciones entre carriles (numeradas por orden) ──
+    C3 -.->|"① Registro"| A1
+    A2 -.->|"② Perfiles"| C4
+    C7 -.->|"③ Pago recibido"| A4
+    A5 -.->|"④ Notifica"| T1
+    T2 -.->|"⑤ Acepta"| A6
+    A6 -.->|"⑥ Tracking ON"| C8
+    T3 -.->|"tracking"| A6
+    A7 -.->|"⑦ Push llegada"| C9
+    C9 -.->|"⑧ Abre puerta"| T4
+    T6 -.->|"⑨ Completado"| A8
+    C10 -.->|"⑩ Confirma"| A9
+    C10 -.->|"⑩"| A10
+    C11 -.->|"⑪ Reseña"| A11
+
+    classDef user     fill:#DBEAFE,stroke:#3B82F6,stroke-width:2px,color:#1E40AF,rx:6
+    classDef system   fill:#EDE9FE,stroke:#7C3AED,stroke-width:2px,color:#4C1D95,rx:6
+    classDef tech     fill:#D1FAE5,stroke:#059669,stroke-width:2px,color:#064E3B,rx:6
+    classDef gateway  fill:#FEF3C7,stroke:#D97706,stroke-width:2.5px,color:#92400E
+    classDef event    fill:#F0FDF4,stroke:#16A34A,stroke-width:3px,color:#14532D
+    </div>
+  </div>
+
+  <!-- Touchpoints table -->
+  <div class="touchpoints">
+    <div class="tp-title">Puntos de contacto clave · Transformación emocional de Carolina</div>
+    <div class="tp-grid">
+      <div class="tp-cell">
+        <div class="tp-phase" style="color:#9A3412;">Disparador</div>
+        <div class="tp-emotion">Pánico → Esperanza</div>
+        <div class="tp-desc">Encuentra REPARA en Google</div>
+      </div>
+      <div class="tp-cell">
+        <div class="tp-phase" style="color:#14532D;">Onboarding</div>
+        <div class="tp-emotion">Escepticismo → Alivio</div>
+        <div class="tp-desc">"5 técnicos disponibles ahora"</div>
+      </div>
+      <div class="tp-cell">
+        <div class="tp-phase" style="color:#1E3A8A;">Selección</div>
+        <div class="tp-emotion">Incertidumbre → Confianza</div>
+        <div class="tp-desc">Portafolio real + antecedentes</div>
+      </div>
+      <div class="tp-cell">
+        <div class="tp-phase" style="color:#581C87;">Reserva</div>
+        <div class="tp-emotion">Riesgo → Seguridad</div>
+        <div class="tp-desc">Escrow: dinero protegido</div>
+      </div>
+      <div class="tp-cell">
+        <div class="tp-phase" style="color:#064E3B;">Entrega</div>
+        <div class="tp-emotion">Ansiedad → Control</div>
+        <div class="tp-desc">Tracking + identidad verificada</div>
+      </div>
+      <div class="tp-cell">
+        <div class="tp-phase" style="color:#881337;">Cierre</div>
+        <div class="tp-emotion">Transacción → Relación</div>
+        <div class="tp-desc">Garantía 30d + técnico guardado</div>
+      </div>
+      <div class="tp-cell">
+        <div class="tp-phase" style="color:#1E293B;">Retención</div>
+        <div class="tp-emotion">Uso único → Hábito</div>
+        <div class="tp-desc">"Mi técnico" en próxima emergencia</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="footer">
+    REPARA · Happy Path BPMN · ICP: Carolina (Profesional 32, Lima Top/Moderna) · Product Power Score: 320 (Medium)
+  </p>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 24,
+        nodeSpacing: 50,
+        rankSpacing: 70,
+        useMaxWidth: false
+      },
+      themeVariables: {
+        primaryColor: '#DBEAFE',
+        primaryBorderColor: '#3B82F6',
+        primaryTextColor: '#1E40AF',
+        lineColor: '#94A3B8',
+        edgeLabelBackground: '#FFFFFF',
+        fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
+        fontSize: '13px',
+        clusterBkg: '#F8FAFC',
+        clusterBorder: '#E2E8F0',
+        titleColor: '#0F172A'
+      }
+    });
+  </script>
+</body>
+</html>
